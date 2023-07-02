@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="../static/style.css">
+    <title>House Price Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+        <div class="login-box">
+          <p>House Price Prediction</p>
+          <form method="post" name="Modelform">
+            <div class="user-box">
+
+              <select class="selectpicker form-control" id="location" name="location" required="1">
+                <option selected disabled hidden >__Select Area__</option>
+                {% for location in locations %}
+                <option value="{{ location }}">{{ location }}</option>
+
+                {% endfor %}
+              </select>
+
+            </div>
+            <div class="user-box">
+              <input autocomplete="off" required  type="number" class="form-control" id="baths" name="baths">
+              <label>Enter the Number of Baths:</label>
+            </div>
+              <div class="user-box">
+              <input autocomplete="off" required  type="number" class="form-control" id="bedrooms" name="bedrooms">
+              <label>Enter the Number of Bedrooms:</label>
+            </div>
+              <div class="user-box">
+              <input autocomplete="off" required  type="number" class="form-control" id="area" name="area">
+              <label>Enter the Total Area:</label>
+            </div>
+
+            <a href="#" onclick="send_data()">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              Predict Price
+            </a>
+          </form>
+
+          <p id="predictionW"></p>
+          <p id="predictionN"></p>
+          <div id="spin">
+            <div class="spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+           </div>
+          </div>
+
+          <p id="names">Developed BY: Ahmad Raza & Shumaim Saleem</p>
+</div>
+<!--      <div class="row">-->
+<!--        <div  class="card" style="width: 100%; height: 100%">-->
+<!--          <div class="card-header" style="text-align: center">-->
+<!--              <h1>Welcome to House Price Predictor</h1>-->
+<!--          </div>-->
+<!--          <div class="card-body">-->
+<!--&lt;!&ndash;              <form method="post" accept-charset="utf-8" name="Modelform">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="col-md-10 form-group" style="text-align: center">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <label><b>Select the Location:</b> </label><br>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <select class="selectpicker form-control" id="location" name="location" required="1">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <option selected disabled hidden >__Select Area__</option>&ndash;&gt;-->
+<!--&lt;!&ndash;                            {% for location in locations %}&ndash;&gt;-->
+<!--&lt;!&ndash;                            <option value="{{ location }}">{{ location }}</option>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                            {% endfor %}&ndash;&gt;-->
+<!--&lt;!&ndash;                        </select>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="col-md-10 form-group" style="text-align: center">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <label><b>Enter the Number of Baths:</b> </label><br>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <input type="text" class="form-control" id="baths" name="baths"&ndash;&gt;-->
+<!--&lt;!&ndash;                               placeholder="Enter the Bath Rooms ">&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="col-md-10 form-group" style="text-align: center">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <label><b>Enter the Number of Bed Rooms:</b> </label><br>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <input type="text" class="form-control" id="bedrooms" name="bedrooms"&ndash;&gt;-->
+<!--&lt;!&ndash;                               placeholder="Enter the Bed Rooms ">&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="col-md-10 form-group" style="text-align: center">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <label><b>Enter the Total Area:</b> </label><br>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <input type="text" class="form-control" id="area" name="area"&ndash;&gt;-->
+<!--&lt;!&ndash;                               placeholder="Enter Total Area ">&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="col-md-10 form-group" style="text-align: center">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <button  class="btn btn-primary form-control" onclick="send_data()">Predict Price</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <br>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div class="row">&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="col-12" style="text-align: center">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <h4><span id="prediction"></span></h4>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;              </form>&ndash;&gt;-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+    </div>
+    <script>
+        function form_handler(event)
+        {
+        event.preventDefault(); // Don't submit the form normally
+        }
+        function send_data()
+        {
+        document.querySelector('form').addEventListener("submit",form_handler);
+
+        var fd=new FormData(document.querySelector('form'));
+
+        var xhr= new XMLHttpRequest({mozSystem: true});
+
+        xhr.open('POST','/predict',true);
+        document.getElementById('predictionN').innerHTML="Wait! Predicting Price.....";
+        xhr.onreadystatechange = function(){
+<!--        var words = toWords(xhr.responseText);-->
+            if(xhr.readyState == XMLHttpRequest.DONE){
+            const words = numberToWords(parseInt(xhr.responseText));
+            document.getElementById('spin').style.display="none";
+                document.getElementById('predictionW').innerHTML= words+" Rupees";
+                document.getElementById('predictionN').innerHTML="Rs. "+ xhr.responseText;
+
+            }
+        };
+
+        xhr.onload= function(){};
+
+        xhr.send(fd);
+        }
+
+        function numberToWords(number) {
+  const singleDigits = [
+    '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+    'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+  ];
+
+  const tensDigits = [
+    '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+  ];
+
+  if (number === 0) {
+    return 'zero';
+  }
+
+  function convertChunk(num) {
+    let words = '';
+    if (num >= 100) {
+      words += singleDigits[Math.floor(num / 100)] + ' Hundred ';
+      num %= 100;
+    }
+
+    if (num >= 20) {
+      words += tensDigits[Math.floor(num / 10)] + ' ';
+      num %= 10;
+    }
+
+    if (num > 0) {
+      words += singleDigits[num] + ' ';
+    }
+
+    return words.trim();
+  }
+
+  let result = '';
+  let chunkCount = 0;
+
+  while (number > 0) {
+    if (number % 1000 !== 0) {
+      result = convertChunk(number % 1000) + ['', ' Thousand', ' Million', ' Billion'][chunkCount] + ' ' + result;
+    }
+    number = Math.floor(number / 1000);
+    chunkCount++;
+  }
+
+  return result.trim();
+}
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  </body>
+</html>
